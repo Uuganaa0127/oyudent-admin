@@ -1,0 +1,11 @@
+img {
+  max-width: 400px;
+}
+.custom-btn {
+  padding: 8px 12px;
+  background-color: #000000;
+  color: white;
+  border: none;
+  border-radius: 15px;
+  cursor: pointer;
+}
