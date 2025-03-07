@@ -2,7 +2,7 @@
 
 import { message } from "antd";
 import axios from "axios";
-
+// import { useRouter } from "next/navigation"; // ✅ Import Next.js router
 // Өөрийн ашиглах гэж буй URL-г .env файлд хадгалж байгаа
 // const url = import.meta.env.VITE_REACT_APP_SECRET_PROD_URL;
 const url = "http://103.41.112.95:3000/v1";
@@ -12,8 +12,9 @@ export default class Api {
     const headers = {
       "Content-Type": type ? type : "application/json",
     };
-    var accessToken = localStorage.getItem("access_token");
+    var accessToken = getTokenFromCookie();
     if (accessToken) {
+      // console.log(accessToken,'access');
       headers.Authorization = `Bearer ${accessToken}`;
     }
     this.client = axios.create({
@@ -86,6 +87,31 @@ function callPatch(path, data, handler) {
     });
 }
 
+
+function  getTokenFromCookie ()  {
+  try {
+    const cookies = document.cookie.split("; ").reduce((acc, cookie) => {
+      const [name, value] = cookie.split("=");
+      acc[name] = value;
+      return acc;
+    }, {} );
+
+    if (cookies.auth_token) {
+      // console.log("Retrieved token from cookie:", cookies.auth_token);
+      return cookies.auth_token;
+    } else {
+      if (typeof window !== "undefined") {
+        window.location.href = "http://localhost:3000/signin"; // ✅ Redirect on client-side
+      }
+      console.warn("No auth_token found in cookies.");
+      return 
+    }
+  } catch (error) {
+    console.error("Error reading token from cookies:", error);
+  }
+
+  return null;
+};
 function callGet(path, responseType = "json") {
   return api
     .service()
@@ -129,6 +155,7 @@ function callDelete(path, handler) {
 }
 
 export const apiService = {
+  getTokenFromCookie,
   callPost,
   callGet,
   callPut,

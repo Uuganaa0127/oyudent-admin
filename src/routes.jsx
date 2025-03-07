@@ -8,13 +8,28 @@ import {
 } from "@heroicons/react/24/solid";
 import { Home, Profile, Tables, Notifications,Test} from "@/pages/dashboard";
 import { SignIn, SignUp } from "@/pages/auth";
-import { News } from "@/pages/news";
-import {HrWorker,HrAdmin} from "@/pages/hrTime"
+import { News  ,CreateNews } from "@/pages/news";
+import { Course }from "@/pages/course"
+import {HrAdmin} from "@/pages/hrTime"
+import Banner from "./pages/banner/banner";
+import { apiService } from "./apiService/apiService";
+import { jwtDecode } from "jwt-decode";
+// import CreateNews from "./pages/homeController/newsCreate";
 // import { Test } from "@/pages/test";
 const icon = {
   className: "w-5 h-5 text-inherit",
 };
-
+const token = apiService.getTokenFromCookie()
+if (token) {
+  
+  try {
+    const decoded = jwtDecode(token);
+    console.log(decoded,'decoded');
+    userRole = decoded.roles?.includes("admin") ? "admin" : "user"; // ✅ Determine role
+  } catch (error) {
+    console.error("Invalid token:", error);
+  }
+}
 const role = true;
 export const routes = [
   {
@@ -52,20 +67,45 @@ export const routes = [
         element: <News />,
         
       },
+      // {
+      //   icon: <InformationCircleIcon {...icon} />,
+      //   name: "CreateNews",
+      //   path: "/createNews",
+      //   element: <CreateNews />,
+        
+      // },
+      {
+        icon: <InformationCircleIcon {...icon} />,
+        name: "banner",
+        path: "/banner",
+        element: <Banner />,
+        
+      },
+   
       
-        role == 1? 
-         ({
-              icon: <InformationCircleIcon {...icon} />,
-              name: "Time",
-              path: "/hrTime",
-              element: <HrWorker />,
-         })
-          : ({
+      
+        // !role == 1? 
+        //  ({
+        //       icon: <InformationCircleIcon {...icon} />,
+        //       name: "Time",
+        //       path: "/hrTime",
+        //       element: <HrWorker />,
+        //  })
+        //   : (
+            {
               icon: <InformationCircleIcon {...icon} />,
               name: "Time",
               path: "/hrTime",
               element: <HrAdmin />,
-            }),
+            },
+            {
+              icon: <InformationCircleIcon {...icon} />,
+              name: "course",
+              path: "/course",
+              element: <Course />,
+              
+            },
+            // ),
     
       {
         icon: <ServerStackIcon {...icon} />,
@@ -75,6 +115,7 @@ export const routes = [
     }
     ],
   },
+
   {
     title: "auth pages",
     layout: "auth",

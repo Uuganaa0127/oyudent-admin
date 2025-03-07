@@ -8,6 +8,8 @@ import {
   Footer,
 } from "@/widgets/layout";
 import routes from "@/routes";
+import { CreateNews } from "../pages/news";
+
 import { useMaterialTailwindController, setOpenConfigurator } from "@/context";
 
 export function Dashboard() {
@@ -19,7 +21,7 @@ export function Dashboard() {
       <Sidenav
         routes={routes}
         brandImg={
-          sidenavType === "dark" ? "/img/logo-ct.png" : "/img/logo-ct-dark.png"
+          sidenavType === "gray" ? "/img/logo-ct.png" : "/img/logo-ct-dark.png"
         }
       />
       <div className="p-4 xl:ml-80">
@@ -35,6 +37,8 @@ export function Dashboard() {
           <Cog6ToothIcon className="h-5 w-5" />
         </IconButton>
         <Routes>
+      <Route path="/news/createNews"  element= {<CreateNews/>} />
+
           {routes.map(
             ({ layout, pages }) =>
               layout === "dashboard" &&

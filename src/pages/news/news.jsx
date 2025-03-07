@@ -149,14 +149,17 @@ export  function News() {
 
     {
       title: <div style={{ textAlign: "center" }}>Banner</div>,
-      dataIndex: "banner",
-      key: "banner",
+      dataIndex: "thumbnail",
+      key: "thumbnail",
       width: 180,
 
-      render: (text) => (
+      render: (text,
+        ) => (
+
         <div style={{ textAlign: "center" }}>
+          {}
           <Image
-            src={`https://myspace.unitel.mn/${text}`}
+            src={`http://103.41.112.95:3000/images/${text}`}
             alt="Thumbnail"
             style={{ width: "50px" }}
           />
@@ -171,7 +174,7 @@ export  function News() {
       render: (text) => (
         <div style={{ textAlign: "center" }}>
           <Image
-            src={`https://myspace.unitel.mn/${text}`}
+            src={`http://103.41.112.95:3000/images/${text}`}
             alt="Thumbnail"
             style={{ width: "50px" }}
           />
@@ -316,7 +319,7 @@ export  function News() {
   const getPost = async () => {
     try {
       const apiResponse = await apiService.callGet(`/blog`);
-      // console.log(apiResponse);
+      console.log(apiResponse,'sss');
       setAllPost(apiResponse);
     } catch {
       console.log("error");
@@ -324,7 +327,9 @@ export  function News() {
   };
 
   const navigateToCreate = () => {
-    navigate("create");
+
+    navigate("createNews");
+
   };
 
   return (

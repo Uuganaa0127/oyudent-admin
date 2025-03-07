@@ -13,6 +13,7 @@ import {
   Upload,
   Spin,
   message,
+  Select,
   Image,
 } from "antd";
 import "antd/dist/reset.css";
@@ -23,10 +24,11 @@ import {
 } from "@ant-design/icons";
 import JoditEditor from "jodit-react";
 import { apiService } from "../../apiService/apiService.jsx";
+
 import { useNavigate } from "react-router-dom";
 const { Panel } = Collapse;
 
-export default function CreateNews() {
+export function CreateNews() {
   const fullScreenRef = useRef();
   const navigate = useNavigate();
   const editor = useRef(null);
@@ -280,7 +282,7 @@ export default function CreateNews() {
     };
 
     try {
-      const response = await fetch("http://10.21.60.17/v1/file", config);
+      const response = await fetch("http://103.41.112.95:3000/v1/file", config);
       const result = await response.json();
       return result?.path;
     } catch (error) {
@@ -301,6 +303,7 @@ export default function CreateNews() {
         faq: values.faq[0].list,
         banner: imgBannerUrl,
         thumbnail: imgThumbnailUrl,
+        type:values
       };
       createNews(body);
     } catch (error) {
@@ -582,6 +585,16 @@ export default function CreateNews() {
                   )}
                 </Form.Item>
                 <Form.Item></Form.Item>
+                <Form.Item
+        label="Select Type"
+        name="userType"
+        rules={[{ required: true, message: "Please select a type!" }]}
+      >
+        <Select placeholder="Choose a type">
+          <Option value="news">News</Option>
+          <Option value="course">course</Option>
+        </Select>
+      </Form.Item>
                 <Form.Item wrapperCol={{ offset: 8, span: 16 }}>
                   <Button
                     icon={<PlusOutlined />}
@@ -597,6 +610,7 @@ export default function CreateNews() {
                     Create
                   </Button>
                 </Form.Item>
+
               </Form>
             </Card>
           </Col>
@@ -655,3 +669,5 @@ export default function CreateNews() {
     </div>
   );
 }
+
+export default CreateNews;

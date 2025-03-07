@@ -20,6 +20,7 @@ import {
   Input,
   message,
 } from "antd";
+import { CloseOutlined } from "@ant-design/icons";
 
 export default function Banner() {
   const [form] = Form.useForm();
@@ -50,11 +51,12 @@ export default function Banner() {
   const getNews = async () => {
     setLoading(true);
     try {
-      const apiResponse = await apiService.callGet(`/news`);
+      const apiResponse = await apiService.callGet(`/blog`);
       if (apiResponse.length > 0) {
         setOpen(true);
         setLoading(false);
       }
+      // console.log(apiResponse,'mn');
       setAllNews(apiResponse);
     } catch {
       setOpen(false);
@@ -73,10 +75,11 @@ export default function Banner() {
   // };
   const uploadBanner = async (data) => {
     setLoading(true);
+    console.log("Submitted Data:", data);
     const body = {
-      image: data,
-      url:
-        "https://myspace.unitel.mn/we-enjoy/around-us-detail/" + selectNews?.id,
+      title: data.title,
+      description: data.description,
+      image: imagepath
       // isExternal: true,
     };
     try {
@@ -103,15 +106,18 @@ export default function Banner() {
     return e?.fileList;
   };
   const onFinish = (values) => {
+    console.log("Submitted Data:", values);
     // const image = uploadImage(values?.dragger[0]?.thumbUrl);
-    uploadBanner(imagepath);
+    uploadBanner(values);
   };
   const onSelectNews = (data) => {
     setOpen(false);
     setSelectNews(data);
   };
   const { Meta } = Card;
-
+const onDelete = (id)=>{
+console.log(id,'deleted');
+}
   const handleUpload = async ({ file, onSuccess, onError }) => {
     const formData = new FormData();
     formData.append("file", file);
@@ -159,7 +165,7 @@ export default function Banner() {
                   cover={
                     <img
                       alt={`banner-${index}`}
-                      src={`https://myspace.unitel.mn${item.banner}`}
+                      src={`http://103.41.112.95:3000/v1/${item.banner}`}
                     />
                   }
                   onClick={() => onSelectNews(item)}
@@ -188,10 +194,13 @@ export default function Banner() {
               {...formItemLayout}
               onFinish={onFinish}
             >
-              <Form.Item label="Гарчиг">
+              <Form.Item label="Гарчиг"  name="title">
                 <Input />
               </Form.Item>
-              <Form.Item
+              <Form.Item label="Тайлбар"  name="description">
+                <Input />
+              </Form.Item>
+              {/* <Form.Item
                 label="News"
                 extra="Banner -т тохирох мэдээг сонгоно уу!"
               >
@@ -212,7 +221,7 @@ export default function Banner() {
                     <Button onClick={getNews}>Choose news</Button>
                   </Col>
                 </Row>
-              </Form.Item>
+              </Form.Item> */}
 
               <Form.Item label="Зураг">
                 <Form.Item
@@ -275,7 +284,7 @@ export default function Banner() {
                       cover={
                         <img
                           alt={`banner-${index}`}
-                          src={`https://myspace.unitel.mn${item.image}`}
+                          src={`http://103.41.112.95:3000/images/${item.image}`}
                         />
                       }
                     >
@@ -285,6 +294,22 @@ export default function Banner() {
                       />
                     </Card>
                   </a>
+                  <Button
+        type="text"
+        shape="circle"
+        icon={<CloseOutlined />}
+        onClick={() => onDelete(item.id)}
+        
+  className="absolute top-2 right-6 bg-white/80 hover:bg-white shadow-md border-none p-1 rounded-full cursor-pointer transition-all duration-200 md:top-3 md:right-6"
+        // style={{
+        //   position: "absolute",
+        //   top: 8,
+        //   right: 10,
+        //   background: "rgba(255, 255, 255, 0.8)",
+        //   border: "none",
+        //   cursor: "pointer",
+        // }}
+      />
                 </Col>
               ))}
             </Row>

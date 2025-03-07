@@ -114,8 +114,8 @@ export function Configurator() {
           </Typography>
           <div className="mt-3 flex items-center gap-2">
             <Button
-              variant={sidenavType === "dark" ? "gradient" : "outlined"}
-              onClick={() => setSidenavType(dispatch, "dark")}
+              variant={sidenavType === "gray" ? "gradient" : "outlined"}
+              onClick={() => setSidenavType(dispatch, "gray")}
             >
               Dark
             </Button>
