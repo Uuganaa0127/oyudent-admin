@@ -1,94 +1,253 @@
-import {
-  Card,
-  Input,
-  Checkbox,
-  Button,
-  Typography,
-} from "@material-tailwind/react";
-import { Link } from "react-router-dom";
+"use client";
 
+import { useState } from "react";
 
-export function SignUp() {
+// import Link from "next/link";
+import signUpUser  from "@/apiService/apiService"; // ✅ Import API function
+
+export function SignUp  ()  {
+  const [formData, setFormData] = useState({
+    firstname: "",
+    lastname: "",
+    register: "",
+    email: "",
+    phone: "",
+    password: "",
+    passwordMatch: "",
+  });
+
+  const [loading, setLoading] = useState(false);
+  const [client,setClient]=useState(false);
+  const [message, setMessage] = useState("");
+
+  // ✅ Handle input changes
+  const handleChange = () => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
+
+  // ✅ Validate input fields before submission
+  const validateInputs = () => {
+    const registerRegex = /^[A-Za-zА-Яа-яҮүӨө]{2}\d{8}$/;
+    const phoneRegex = /^\d{8}$/; // 🔥 Exactly 8 digits
+    const emailRegex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/;
+
+    if (!registerRegex.test(formData.register)) {
+      return "Регистер 2 үсэг + 8 тоо байх ёстой. (Жишээ: AB12345678)";
+    }
+    if (!phoneRegex.test(formData.phone)) {
+      return "Утасны дугаар 8 оронтой байх ёстой.";
+    }
+    if (formData.password.length < 8) {
+      return "Нууц үг хамгийн багадаа 8 тэмдэгт байх ёстой.";
+    }
+    if (!emailRegex.test(formData.email)) {
+      return "Имэйл хаяг зөв оруулна уу. (Жишээ: example@example.com)";
+    }
+    if (formData.password !== formData.passwordMatch) {
+      return "Нууц үг тохирохгүй байна.";
+    }
+    return null; // ✅ No errors
+  };
+
+  // ✅ Handle form submission
+  const handleSubmit = async () => {
+    e.preventDefault();
+    setLoading(true);
+    setMessage("");
+
+    const validationError = validateInputs();
+    if (validationError) {
+      setMessage(validationError);
+      setLoading(false);
+      return;
+    }
+
+    try {
+      const response = await signUpUser(formData,client);
+      const x = response.json();
+      console.log(x);
+
+      setMessage("Бүртгэл амжилттай хийгдлээ! 🎉");
+    } catch  {
+      setMessage(error.message || "Бүртгэл амжилтгүй боллоо.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
-    <section className="m-8 flex">
-            <div className="w-2/5 h-full hidden lg:block">
-        <img
-          src="/img/pattern.png"
-          className="h-full w-full object-cover rounded-3xl"
-        />
+    <>
+      {/* <Breadcrumb title={"Signup"} pages={["Signup"]} /> */}
+      <section className="overflow-hidden py-20 bg-gray-2">
+        <div className="max-w-[1170px] w-full mx-auto px-4 sm:px-8 xl:px-0">
+          <div className="max-w-[570px] w-full mx-auto rounded-xl bg-white shadow-1 p-4 sm:p-7.5 xl:p-11">
+          <div className="flex gap-4">
+        <button
+          onClick={() => setClient(true)}
+          className={`w-full flex justify-center font-medium text-black py-3 px-6 rounded-lg transition-all duration-300 
+      ${
+        client
+          ? "bg-blue-600 shadow-lg scale-105"
+          : "bg-gray-500 hover:bg-blue-500"
+      }`}
+        >
+        User
+        </button>
+        <button
+          onClick={() => setClient(false)}
+          className={`w-full flex justify-center font-medium text-black py-3 px-6 rounded-lg transition-all duration-300 
+      ${
+        !client
+          ? "bg-blue-600 shadow-lg scale-105"
+          : "bg-gray-500 hover:bg-blue-500"
+      }`}
+        >
+     Client
+        </button>
       </div>
-      <div className="w-full lg:w-3/5 flex flex-col items-center justify-center">
-        <div className="text-center">
-          <Typography variant="h2" className="font-bold mb-4">Join Us Today</Typography>
-          <Typography variant="paragraph" color="blue-gray" className="text-lg font-normal">Enter your email and password to register.</Typography>
-        </div>
-        <form className="mt-8 mb-2 mx-auto w-80 max-w-screen-lg lg:w-1/2">
-          <div className="mb-1 flex flex-col gap-6">
-            <Typography variant="small" color="blue-gray" className="-mb-3 font-medium">
-              Your email
-            </Typography>
-            <Input
-              size="lg"
-              placeholder="name@mail.com"
-              className=" !border-t-blue-gray-200 focus:!border-t-gray-900"
-              labelProps={{
-                className: "before:content-none after:content-none",
-              }}
-            />
-          </div>
-          <Checkbox
-            label={
-              <Typography
-                variant="small"
-                color="gray"
-                className="flex items-center justify-start font-medium"
-              >
-                I agree the&nbsp;
-                <a
-                  href="#"
-                  className="font-normal text-black transition-colors hover:text-gray-900 underline"
+
+            <div className="mt-5.5">
+              <form onSubmit={handleSubmit}>
+                <div className="mb-5">
+                  <label htmlFor="lastname" className="block mb-2.5">
+                    Овог <span className="text-red">*</span>
+                  </label>
+                  <input
+                    type="text"
+                    name="lastname"
+                    id="lastname"
+                    placeholder="Овог оруулна уу"
+                    value={formData.lastname}
+                    onChange={handleChange}
+                    required
+                    className="rounded-lg border border-gray-3 bg-gray-1 w-full py-3 px-5 outline-none duration-200 focus:ring-2 focus:ring-blue/20"
+                  />
+                </div>
+
+                <div className="mb-5">
+                  <label htmlFor="firstname" className="block mb-2.5">
+                    Нэр <span className="text-red">*</span>
+                  </label>
+                  <input
+                    type="text"
+                    name="firstname"
+                    id="firstname"
+                    placeholder="Нэр оруулна уу"
+                    value={formData.firstname}
+                    onChange={handleChange}
+                    required
+                    className="rounded-lg border border-gray-3 bg-gray-1 w-full py-3 px-5 outline-none duration-200 focus:ring-2 focus:ring-blue/20"
+                  />
+                </div>
+{client?  <div className="mb-5">
+                  <label htmlFor="register" className="block mb-2.5">
+                    Регистер <span className="text-red">*</span>
+                  </label>
+                  <input
+                    type="text"
+                    name="register"
+                    id="register"
+                    placeholder="AB12345678"
+                    value={formData.register}
+                    onChange={handleChange}
+                    required
+                    className="rounded-lg border border-gray-3 bg-gray-1 w-full py-3 px-5 outline-none duration-200 focus:ring-2 focus:ring-blue/20"
+                  />
+                </div>:<></>}
+               
+
+                <div className="mb-5">
+                  <label htmlFor="phone" className="block mb-2.5">
+                    Утасны дугаар <span className="text-red">*</span>
+                  </label>
+                  <input
+                    type="text"
+                    name="phone"
+                    id="phone"
+                    placeholder="88887777"
+                    value={formData.phone}
+                    onChange={handleChange}
+                    required
+                    className="rounded-lg border border-gray-3 bg-gray-1 w-full py-3 px-5 outline-none duration-200 focus:ring-2 focus:ring-blue/20"
+                  />
+                </div>
+                <div className="mb-5">
+                  <label htmlFor="phone" className="block mb-2.5">
+                    И-мэйл хаяг <span className="text-red">*</span>
+                  </label>
+                  <input
+                    type="text"
+                    name="email"
+                    id="Email"
+                    placeholder="john.doe@gmail.com"
+                    value={formData.email}
+                    onChange={handleChange}
+                    required
+                    className="rounded-lg border border-gray-3 bg-gray-1 w-full py-3 px-5 outline-none duration-200 focus:ring-2 focus:ring-blue/20"
+                  />
+                </div>
+
+                <div className="mb-5">
+                  <label htmlFor="password" className="block mb-2.5">
+                    Нууц үг <span className="text-red">*</span>
+                  </label>
+                  <input
+                    type="password"
+                    name="password"
+                    id="password"
+                    placeholder="Enter your password"
+                    value={formData.password}
+                    onChange={handleChange}
+                    required
+                    className="rounded-lg border border-gray-3 bg-gray-1 w-full py-3 px-5 outline-none duration-200 focus:ring-2 focus:ring-blue/20"
+                  />
+                </div>
+
+                <div className="mb-5">
+                  <label htmlFor="passwordMatch" className="block mb-2.5">
+                    Нууц үгээ давтна уу <span className="text-red">*</span>
+                  </label>
+                  <input
+                    type="password"
+                    name="passwordMatch"
+                    id="passwordMatch"
+                    placeholder="Re-type your password"
+                    value={formData.passwordMatch}
+                    onChange={handleChange}
+                    required
+                    className="rounded-lg border border-gray-3 bg-gray-1 w-full py-3 px-5 outline-none duration-200 focus:ring-2 focus:ring-blue/20"
+                  />
+                </div>
+
+                <button
+                  type="submit"
+                  disabled={loading}
+                  className="w-full flex justify-center font-medium text-white bg-dark py-3 px-6 rounded-lg ease-out duration-200 hover:bg-blue mt-7.5"
                 >
-                  Terms and Conditions
-                </a>
-              </Typography>
-            }
-            containerProps={{ className: "-ml-2.5" }}
-          />
-          <Button className="mt-6" fullWidth>
-            Register Now
-          </Button>
+                  {loading ? "Бүртгэж байна..." : "Бүртгүүлэх"}
+                </button>
 
-          <div className="space-y-4 mt-8">
-            <Button size="lg" color="white" className="flex items-center gap-2 justify-center shadow-md" fullWidth>
-              <svg width="17" height="16" viewBox="0 0 17 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <g clipPath="url(#clip0_1156_824)">
-                  <path d="M16.3442 8.18429C16.3442 7.64047 16.3001 7.09371 16.206 6.55872H8.66016V9.63937H12.9813C12.802 10.6329 12.2258 11.5119 11.3822 12.0704V14.0693H13.9602C15.4741 12.6759 16.3442 10.6182 16.3442 8.18429Z" fill="#4285F4" />
-                  <path d="M8.65974 16.0006C10.8174 16.0006 12.637 15.2922 13.9627 14.0693L11.3847 12.0704C10.6675 12.5584 9.7415 12.8347 8.66268 12.8347C6.5756 12.8347 4.80598 11.4266 4.17104 9.53357H1.51074V11.5942C2.86882 14.2956 5.63494 16.0006 8.65974 16.0006Z" fill="#34A853" />
-                  <path d="M4.16852 9.53356C3.83341 8.53999 3.83341 7.46411 4.16852 6.47054V4.40991H1.51116C0.376489 6.67043 0.376489 9.33367 1.51116 11.5942L4.16852 9.53356Z" fill="#FBBC04" />
-                  <path d="M8.65974 3.16644C9.80029 3.1488 10.9026 3.57798 11.7286 4.36578L14.0127 2.08174C12.5664 0.72367 10.6469 -0.0229773 8.65974 0.000539111C5.63494 0.000539111 2.86882 1.70548 1.51074 4.40987L4.1681 6.4705C4.8001 4.57449 6.57266 3.16644 8.65974 3.16644Z" fill="#EA4335" />
-                </g>
-                <defs>
-                  <clipPath id="clip0_1156_824">
-                    <rect width="16" height="16" fill="white" transform="translate(0.5)" />
-                  </clipPath>
-                </defs>
-              </svg>
-              <span>Sign in With Google</span>
-            </Button>
-            <Button size="lg" color="white" className="flex items-center gap-2 justify-center shadow-md" fullWidth>
-              <img src="/img/twitter-logo.svg" height={24} width={24} alt="" />
-              <span>Sign in With Twitter</span>
-            </Button>
+                {message && (
+                  <p className="text-center text-red-600 mt-4">{message}</p>
+                )}
+
+                <p className="text-center mt-6">
+                  Та өөрийн бүртгэлтэй юу?
+                  <Link
+                    href="/signin"
+                    className="text-dark ease-out duration-200 hover:text-blue pl-2"
+                  >
+                    Нэвтрэх
+                  </Link>
+                </p>
+              </form>
+            </div>
           </div>
-          <Typography variant="paragraph" className="text-center text-blue-gray-500 font-medium mt-4">
-            Already have an account?
-            <Link to="/auth/sign-in" className="text-gray-900 ml-1">Sign in</Link>
-          </Typography>
-        </form>
-
-      </div>
-    </section>
+        </div>
+      </section>
+    </>
   );
-}
+};
+
 
 export default SignUp;

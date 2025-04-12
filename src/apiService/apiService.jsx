@@ -69,6 +69,32 @@ function callPost(path, data, type, handler) {
       }
       return response?.data;
     });
+    
+}
+function signUpUser (path,userData,a){
+
+  return api 
+  .service(type)
+  .post(path, userData)
+  .then((response)=>{
+
+    if (userData.password !== userData.passwordMatch) {
+      throw new Error("Passwords do not match.");
+    }
+
+    if (!a === true) {
+      response =  apiRequest("auth/register/", "POST", userData);
+    } else {
+      response =  apiRequest("auth/register/client", "POST", userData);
+    }
+    if (response?.status <= 200 || response?.status > 299) {
+      message.error(response?.data?.message);
+      return;
+    }
+    return response?.data;
+  
+
+});
 }
 
 function callPatch(path, data, handler) {
@@ -161,4 +187,5 @@ export const apiService = {
   callPut,
   callDelete,
   callPatch,
+  signUpUser
 };
