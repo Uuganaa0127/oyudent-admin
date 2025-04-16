@@ -231,15 +231,7 @@ export function SignUp  ()  {
                   <p className="text-center text-red-600 mt-4">{message}</p>
                 )}
 
-                <p className="text-center mt-6">
-                  Та өөрийн бүртгэлтэй юу?
-                  <Link
-                    href="/signin"
-                    className="text-dark ease-out duration-200 hover:text-blue pl-2"
-                  >
-                    Нэвтрэх
-                  </Link>
-                </p>
+             
               </form>
             </div>
           </div>

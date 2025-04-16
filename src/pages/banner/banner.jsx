@@ -165,7 +165,7 @@ console.log(id,'deleted');
                   cover={
                     <img
                       alt={`banner-${index}`}
-                      src={`http://103.41.112.95:3000/v1/${item.banner}`}
+                      src={`${import.meta.env.VITE_API_URL}/${item.banner}`}
                     />
                   }
                   onClick={() => onSelectNews(item)}
@@ -284,7 +284,7 @@ console.log(id,'deleted');
                       cover={
                         <img
                           alt={`banner-${index}`}
-                          src={`http://103.41.112.95:3000/images/${item.image}`}
+                          src={`${import.meta.env.VITE_API_URL}/images/${item.image}`}
                         />
                       }
                     >

@@ -11,6 +11,7 @@ import {
   Button,
   Collapse,
   Upload,
+
   Spin,
   message,
   Select,
@@ -282,7 +283,7 @@ export function CreateNews() {
     };
 
     try {
-      const response = await fetch("http://103.41.112.95:3000/v1/file", config);
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/file`, config);
       const result = await response.json();
       return result?.path;
     } catch (error) {
@@ -334,6 +335,7 @@ export function CreateNews() {
       message.error("Failed to create news");
     }
   };
+
 
   const createBanner = async (bannerBody, newsId) => {
     const bannerCreateBody = {

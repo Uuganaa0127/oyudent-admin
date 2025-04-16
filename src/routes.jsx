@@ -112,7 +112,13 @@ export const routes = [
       name: "test",
       path: "/test",
       element: <Test />,
-    }
+    },
+    {
+      icon: <RectangleStackIcon {...icon} />,
+      name: "sign up",
+      path: "/sign-up",
+      element: <SignUp />,
+    },
     ],
   },
 
@@ -126,12 +132,7 @@ export const routes = [
         path: "/sign-in",
         element: <SignIn />,
       },
-      {
-        icon: <RectangleStackIcon {...icon} />,
-        name: "sign up",
-        path: "/sign-up",
-        element: <SignUp />,
-      },
+  
     
     ],
   },

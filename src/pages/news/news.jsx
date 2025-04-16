@@ -159,7 +159,7 @@ export  function News() {
         <div style={{ textAlign: "center" }}>
           {}
           <Image
-            src={`http://103.41.112.95:3000/images/${text}`}
+            src={`${import.meta.env.VITE_API_URL}/images/${text}`}
             alt="Thumbnail"
             style={{ width: "50px" }}
           />
@@ -174,7 +174,7 @@ export  function News() {
       render: (text) => (
         <div style={{ textAlign: "center" }}>
           <Image
-            src={`http://103.41.112.95:3000/images/${text}`}
+            src={`${import.meta.env.VITE_API_URL}/images/${text}`}
             alt="Thumbnail"
             style={{ width: "50px" }}
           />

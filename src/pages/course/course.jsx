@@ -161,7 +161,7 @@ export function Course() {
                     cover={
                       <img
                         alt={`course-${index}`}
-                        src={`http://103.41.112.95:3000/images/${course.thumbnail}`}
+                        src={`${import.meta.env.VITE_API_URL}/images/${course.thumbnail}`}
                       />
                     }
                   >

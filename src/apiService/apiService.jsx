@@ -5,8 +5,11 @@ import axios from "axios";
 // import { useRouter } from "next/navigation"; // ✅ Import Next.js router
 // Өөрийн ашиглах гэж буй URL-г .env файлд хадгалж байгаа
 // const url = import.meta.env.VITE_REACT_APP_SECRET_PROD_URL;
-const url = "http://103.41.112.95:3000/v1";
+// const url = "process.env.REACT_APP_API_URL/v1";
 
+const url = `${import.meta.env.VITE_API_URL}/v1`;
+
+console.log(url,'url');
 export default class Api {
   service = (type) => {
     const headers = {
