@@ -9,11 +9,13 @@ import {
 import { Home, Profile, Tables, Notifications,Test} from "@/pages/dashboard";
 import { SignIn, SignUp } from "@/pages/auth";
 import { News  ,CreateNews } from "@/pages/news";
-import { Course }from "@/pages/course"
+import { Course, CourseParticipants }from "@/pages/course"
 import {HrAdmin} from "@/pages/hrTime"
 import Banner from "./pages/banner/banner";
+import {BrandsPage} from "@/pages/brands"
 import { apiService } from "./apiService/apiService";
 import { jwtDecode } from "jwt-decode";
+import {CountryPage} from "@/pages/country/CountryPage"
 // import CreateNews from "./pages/homeController/newsCreate";
 // import { Test } from "@/pages/test";
 const icon = {
@@ -81,6 +83,20 @@ export const routes = [
         element: <Banner />,
         
       },
+      {
+        icon: <InformationCircleIcon {...icon} />,
+        name: "BrandsPage",
+        path: "/BrandsPage",
+        element: <BrandsPage />,
+        
+      },
+      {
+        icon: <InformationCircleIcon {...icon} />,
+        name: "CountryPage",
+        path: "/CountryPage",
+        element: <CountryPage />,
+        
+      },
    
       
       
@@ -105,6 +121,7 @@ export const routes = [
               element: <Course />,
               
             },
+            
             // ),
     
       {

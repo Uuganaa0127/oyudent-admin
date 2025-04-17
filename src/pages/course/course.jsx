@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { apiService } from "../../apiService/apiService.jsx";
 import { InboxOutlined, CloseOutlined } from "@ant-design/icons";
 import {
@@ -14,6 +15,7 @@ import {
 } from "antd";
 
 export function Course() {
+  const navigate = useNavigate();
   const [form] = Form.useForm();
   const [allCourses, setAllCourses] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -88,7 +90,10 @@ export function Course() {
       setLoading(false);
     }
   };
-
+const courseDetails = async (values)=>{
+  console.log(values);
+  navigate(`CourseParticipants/${values}`)
+}
   return (
     <>
       <Card title="Add Course">
@@ -157,6 +162,7 @@ export function Course() {
               {allCourses.map((course, index) => (
                 <Col key={index} span={12}>
                   <Card
+                    onClick={() => courseDetails(course.id)}
                     hoverable
                     cover={
                       <img

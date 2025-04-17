@@ -9,8 +9,9 @@ import {
 } from "@/widgets/layout";
 import routes from "@/routes";
 import { CreateNews } from "../pages/news";
-
+import CourseParticipants from "@/pages/course/courseParticipants";
 import { useMaterialTailwindController, setOpenConfigurator } from "@/context";
+// import { CourseParticipants } from "../pages/course";
 
 export function Dashboard() {
   const [controller, dispatch] = useMaterialTailwindController();
@@ -38,6 +39,7 @@ export function Dashboard() {
         </IconButton>
         <Routes>
       <Route path="/news/createNews"  element= {<CreateNews/>} />
+      <Route path="/course/CourseParticipants/:courseId" element={<CourseParticipants />} />
 
           {routes.map(
             ({ layout, pages }) =>
