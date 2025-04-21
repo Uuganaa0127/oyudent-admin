@@ -10,12 +10,13 @@ import { Home, Profile, Tables, Notifications,Test} from "@/pages/dashboard";
 import { SignIn, SignUp } from "@/pages/auth";
 import { News  ,CreateNews } from "@/pages/news";
 import { Course, CourseParticipants }from "@/pages/course"
-import {HrAdmin} from "@/pages/hrTime"
+import { HrAdmin } from "@/pages/hrTime"
 import Banner from "./pages/banner/banner";
-import {BrandsPage} from "@/pages/brands"
+import { BrandsPage } from "@/pages/brands"
 import { apiService } from "./apiService/apiService";
 import { jwtDecode } from "jwt-decode";
-import {CountryPage} from "@/pages/country/CountryPage"
+import { CountryPage } from "@/pages/country/CountryPage"
+import { WarehousePage, AddInventoryPage } from "@/pages/inventory"
 // import CreateNews from "./pages/homeController/newsCreate";
 // import { Test } from "@/pages/test";
 const icon = {
@@ -35,6 +36,7 @@ if (token) {
 const role = true;
 export const routes = [
   {
+    title: "Dashboard",
     layout: "dashboard",
     pages: [
       {
@@ -74,14 +76,12 @@ export const routes = [
       //   name: "CreateNews",
       //   path: "/createNews",
       //   element: <CreateNews />,
-        
       // },
       {
         icon: <InformationCircleIcon {...icon} />,
         name: "banner",
         path: "/banner",
         element: <Banner />,
-        
       },
       {
         icon: <InformationCircleIcon {...icon} />,
@@ -95,11 +95,7 @@ export const routes = [
         name: "CountryPage",
         path: "/CountryPage",
         element: <CountryPage />,
-        
       },
-   
-      
-      
         // !role == 1? 
         //  ({
         //       icon: <InformationCircleIcon {...icon} />,
@@ -119,11 +115,8 @@ export const routes = [
               name: "course",
               path: "/course",
               element: <Course />,
-              
             },
-            
             // ),
-    
       {
         icon: <ServerStackIcon {...icon} />,
       name: "test",
@@ -138,7 +131,36 @@ export const routes = [
     },
     ],
   },
-
+  {
+    title:"Warehouse",
+    layout: "warehouse",
+    pages: [
+      {
+        icon: <HomeIcon {...icon} />,
+        name: "WarehousePage",
+        path: "/warehousePage",
+        element: <WarehousePage />,
+      },
+      {
+        icon: <HomeIcon {...icon} />,
+        name: "AddtoInventory",
+        path: "/AddtoInventory",
+        element: <AddInventoryPage />,
+      },
+      {
+      icon: <ServerStackIcon {...icon} />,
+      name: "test",
+      path: "/test",
+      element: <Test />,
+    },
+    {
+      icon: <RectangleStackIcon {...icon} />,
+      name: "sign up",
+      path: "/sign-up",
+      element: <SignUp />,
+    },
+    ],
+  },
   {
     title: "auth pages",
     layout: "auth",
@@ -149,25 +171,8 @@ export const routes = [
         path: "/sign-in",
         element: <SignIn />,
       },
-  
-    
     ],
-  },
-  // {
-  //   title: "test_pages",
-  //   layout: "test",
-  //   pages: [
-  //     {
-  //       icon: <ServerStackIcon {...icon} />,
-  //       name: "test",
-  //       path: "/test",
-  //       element: <Test />,
-  //     },
-    
-    
-  //   ],
-  // },
- 
+  }, 
 ];
 
 export default routes;

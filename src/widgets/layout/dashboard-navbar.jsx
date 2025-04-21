@@ -25,12 +25,15 @@ import {
   setOpenConfigurator,
   setOpenSidenav,
 } from "@/context";
+import { useState } from "react";
 
 export function DashboardNavbar() {
   const [controller, dispatch] = useMaterialTailwindController();
   const { fixedNavbar, openSidenav } = controller;
   const { pathname } = useLocation();
   const [layout, page] = pathname.split("/").filter((el) => el !== "");
+
+const [a,seta]=useState(false)
 
   return (
     <Navbar
@@ -41,10 +44,12 @@ export function DashboardNavbar() {
           : "px-0 py-1"
       }`}
       fullWidth
+      
       blurred={fixedNavbar}
     >
       <div className="flex flex-col-reverse justify-between gap-6 md:flex-row md:items-center">
         <div className="capitalize">
+
           <Breadcrumbs
             className={`bg-transparent p-0 transition-all ${
               fixedNavbar ? "mt-1" : ""
@@ -67,6 +72,7 @@ export function DashboardNavbar() {
               {page}
             </Typography>
           </Breadcrumbs>
+
           <Typography variant="h6" color="blue-gray">
             {page}
           </Typography>
@@ -75,6 +81,7 @@ export function DashboardNavbar() {
           <div className="mr-auto md:mr-4 md:w-56">
             <Input label="Search" />
           </div>
+          
           <IconButton
             variant="text"
             color="blue-gray"

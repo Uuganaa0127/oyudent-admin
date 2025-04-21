@@ -8,17 +8,23 @@ import {
   Footer,
 } from "@/widgets/layout";
 import routes from "@/routes";
+
 import { CreateNews } from "../pages/news";
 import CourseParticipants from "@/pages/course/courseParticipants";
 import { useMaterialTailwindController, setOpenConfigurator } from "@/context";
+import { useState } from "react";
+import { WarehousePage } from "@/pages/inventory";
+import { Test } from "@/pages/dashboard";
+import { WarehouseDetailPage } from "@/pages/inventory";
 // import { CourseParticipants } from "../pages/course";
 
 export function Dashboard() {
   const [controller, dispatch] = useMaterialTailwindController();
   const { sidenavType } = controller;
-
   return (
+    
     <div className="min-h-screen bg-blue-gray-50/50">
+      
       <Sidenav
         routes={routes}
         brandImg={
@@ -33,13 +39,19 @@ export function Dashboard() {
           color="white"
           className="fixed bottom-8 right-8 z-40 rounded-full shadow-blue-gray-900/10"
           ripple={false}
-          onClick={() => setOpenConfigurator(dispatch, true)}
+          onClick={() => setOpenConfigurator(dispatch, false)}
         >
           <Cog6ToothIcon className="h-5 w-5" />
         </IconButton>
+
         <Routes>
       <Route path="/news/createNews"  element= {<CreateNews/>} />
       <Route path="/course/CourseParticipants/:courseId" element={<CourseParticipants />} />
+      <Route path="/warehouse/warehousePage"  element= {<WarehousePage/>} />
+      <Route path="/warehouse/details/:id" element={<WarehouseDetailPage />} />
+
+      {/* <Route path="/test/Test" element={<Test />} /> */}
+
 
           {routes.map(
             ({ layout, pages }) =>
