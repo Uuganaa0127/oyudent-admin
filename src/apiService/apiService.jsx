@@ -16,10 +16,10 @@ export default class Api {
       "Content-Type": type ? type : "application/json",
     };
     var accessToken = getTokenFromCookie();
-    if (accessToken) {
+    // if (accessToken) {
       // console.log(accessToken,'access');
       headers.Authorization = `Bearer ${accessToken}`;
-    }
+    // }
     this.client = axios.create({
       baseURL: url,
       timeout: 60000,
@@ -74,31 +74,38 @@ function callPost(path, data, type, handler) {
     });
     
 }
-function signUpUser (path,userData,a){
+export const signUpUser = async (userData, isClient) => {
+  if (userData.password !== userData.passwordMatch) {
+    throw new Error("Passwords do not match.");
+  }
 
-  return api 
-  .service(type)
-  .post(path, userData)
-  .then((response)=>{
+  const endpoint = isClient
+    ? "auth/register/client"
+    : "auth/register/";
 
-    if (userData.password !== userData.passwordMatch) {
-      throw new Error("Passwords do not match.");
+  try {
+    const response = await fetch(`${url}/${endpoint}`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(userData),
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      // You can customize this to match your API error format
+      throw new Error(data.message || "Signup failed.");
     }
 
-    if (!a === true) {
-      response =  apiRequest("auth/register/", "POST", userData);
-    } else {
-      response =  apiRequest("auth/register/client", "POST", userData);
-    }
-    if (response?.status <= 200 || response?.status > 299) {
-      message.error(response?.data?.message);
-      return;
-    }
-    return response?.data;
-  
+    return data;
+  } catch (error) {
+    console.error("Signup Error:", error);
+    throw error;
+  }
+};
 
-});
-}
 
 function callPatch(path, data, handler) {
   return api

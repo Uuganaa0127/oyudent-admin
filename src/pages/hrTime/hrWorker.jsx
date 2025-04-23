@@ -123,7 +123,7 @@ export function HrAdmin() {
             <h3 className="text-lg font-semibold mb-4">Attendance for {selectedEmployee.name}</h3>
 
             {/* ✅ Attendance Days */}
-            {attendance.length > 0 ? (
+            {attendance?.length > 0 ? (
               <table className="w-full border-collapse border border-gray-300">
                 <thead className="bg-gray-100">
                   <tr>
