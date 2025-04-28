@@ -16,7 +16,9 @@ import { BrandsPage } from "@/pages/brands"
 import { apiService } from "./apiService/apiService";
 import { jwtDecode } from "jwt-decode";
 import { CountryPage } from "@/pages/country/CountryPage"
-import { WarehousePage, AddInventoryPage } from "@/pages/inventory"
+import { WarehousePage, AddInventoryPage, ShowInvoicesPage } from "@/pages/inventory"
+import UserList from "./pages/userList/userList";
+
 // import CreateNews from "./pages/homeController/newsCreate";
 // import { Test } from "@/pages/test";
 const icon = {
@@ -116,6 +118,12 @@ export const routes = [
               path: "/course",
               element: <Course />,
             },
+            {
+              icon: <InformationCircleIcon {...icon} />,
+              name: "UserList",
+              path: "/UserList",
+              element: <UserList />,
+            },
             // ),
       {
         icon: <ServerStackIcon {...icon} />,
@@ -146,6 +154,12 @@ export const routes = [
         name: "AddtoInventory",
         path: "/AddtoInventory",
         element: <AddInventoryPage />,
+      },
+      {
+        icon: <HomeIcon {...icon} />,
+        name: "ShowInvoices",
+        path: "/ShowInvoices",
+        element: <ShowInvoicesPage />,
       },
       {
       icon: <ServerStackIcon {...icon} />,

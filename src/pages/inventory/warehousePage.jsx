@@ -1,6 +1,9 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { Select, Input } from 'antd';
 import ProductModal from '../../components/ProductModal';
+
+const { Option } = Select;
 
 const initialProducts = [
   {
@@ -12,6 +15,7 @@ const initialProducts = [
     expiration: '2024-12-31',
     manufacturer: 'Dell',
     country: 'USA',
+    category: 'Electronics',
     details: 'High-end ultrabook',
     image: null,
   },
@@ -24,6 +28,7 @@ const initialProducts = [
     expiration: '2025-01-15',
     manufacturer: 'Logitech',
     country: 'Switzerland',
+    category: 'Electronics',
     details: 'Wireless mouse',
     image: null,
   },
@@ -73,56 +78,58 @@ export function WarehousePage() {
       <div className="max-w-7xl mx-auto bg-white p-6 rounded shadow-md">
         {/* Controls */}
         <div className="flex flex-wrap gap-4 mb-6 justify-between">
-          <input
-            type="text"
+          {/* 🔍 Search Input */}
+          <Input
             placeholder="Хайх..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="border px-4 py-2 rounded w-full md:w-1/3"
+            className="w-full md:w-1/3"
           />
 
-          <select
+          {/* 🏭 Manufacturer Dropdown */}
+          <Select
+            showSearch
+            placeholder="Үйлдвэрлэгч сонгох"
             value={filterManufacturer}
-            onChange={(e) => setFilterManufacturer(e.target.value)}
-            className="border px-4 py-2 rounded"
+            onChange={(value) => setFilterManufacturer(value)}
+            allowClear
+            className="w-48"
+            filterOption={(input, option) =>
+              (option?.children ?? '').toLowerCase().includes(input.toLowerCase())
+            }
           >
-            <option value="">Үйлдвэрлэгч</option>
             {manufacturers.map((m) => (
-              <option key={m}>{m}</option>
+              <Option key={m} value={m}>{m}</Option>
             ))}
-          </select>
+          </Select>
 
-          <select
+          {/* 🌍 Country Dropdown */}
+          <Select
+            showSearch
+            placeholder="Улс сонгох"
             value={filterCountry}
-            onChange={(e) => setFilterCountry(e.target.value)}
-            className="border px-4 py-2 rounded"
+            onChange={(value) => setFilterCountry(value)}
+            allowClear
+            className="w-48"
+            filterOption={(input, option) =>
+              (option?.children ?? '').toLowerCase().includes(input.toLowerCase())
+            }
           >
-            <option value="">Улс</option>
             {countries.map((c) => (
-              <option key={c}>{c}</option>
+              <Option key={c} value={c}>{c}</Option>
             ))}
-          </select>
+          </Select>
 
+          {/* ➕ Бараа нэмэх Button */}
           <button
-            onClick={() => {
-              setShowModal(true);
-              setCurrentProduct(null);
-            }}
+            onClick={() => navigate('/warehouse/details/new')} // sample: navigate to product details (id = 1)
             className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600"
           >
             + Бараа Нэмэх
           </button>
-
-          <button
-            onClick={() => navigate(`/AddToInventory`)}
-
-            className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600"
-          >
-            Орлогдох
-          </button>
         </div>
 
-        {/* Table */}
+        {/* 🛒 Product Table */}
         <div className="overflow-x-auto">
           <table className="w-full table-auto border border-gray-300 text-sm">
             <thead className="bg-gray-200">
@@ -145,13 +152,12 @@ export function WarehousePage() {
                   <td className="border px-3 py-2">{product.manufacturer}</td>
                   <td className="border px-3 py-2">{product.country}</td>
                   <td className="border px-3 py-2 text-center">
-                  <button
-  onClick={() => navigate(`/warehouse/details/${product.id}`)}
-  className="text-blue-600 hover:underline"
->
-  Дэлгэрэнгүй
-</button>
-
+                    <button
+                      onClick={() => navigate(`/warehouse/details/${product.id}`)}
+                      className="text-blue-600 hover:underline"
+                    >
+                      Дэлгэрэнгүй
+                    </button>
                   </td>
                   <td className="border px-3 py-2 text-center">
                     <button
@@ -168,6 +174,7 @@ export function WarehousePage() {
         </div>
       </div>
 
+      {/* ➡️ Product Modal for Add/Edit */}
       <ProductModal
         showModal={showModal}
         setShowModal={setShowModal}

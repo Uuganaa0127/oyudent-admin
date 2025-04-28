@@ -1,176 +1,180 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useEffect, useState, useRef } from "react";
+import { useNavigate } from "react-router-dom"; // ✅ Use Navigate for React Router
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
-import { message } from "antd";
-import { apiService } from "../../apiService/apiService.jsx";
+import { apiService } from "@/apiService/apiService";
+import { message, Modal, Input, Button } from "antd";
 
-// ✅ Mock Employee Data
-const mockEmployees = [
-  { id: 1, name: "John Doe" },
-  { id: 2, name: "Jane Smith" },
-  { id: 3, name: "Michael Brown" },
-];
-
-export function HrAdmin() {
-  const [selectedEmployee, setSelectedEmployee] = useState(null);
-  const [modalOpen, setModalOpen] = useState(false);
-  const [location, setLocation] = useState({ latitude: null, longitude: null });
+export  function HrAdmin() {
+  const navigate = useNavigate(); // ✅ Router navigation
   const [map, setMap] = useState(null);
-  const markerRef = useRef(null);
-  const modalRef = useRef(null);
+  const [offices, setOffices] = useState([]);
+  const [location, setLocation] = useState({ latitude: null, longitude: null });
+  const [newOfficeName, setNewOfficeName] = useState("");
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [dragEnabled, setDragEnabled] = useState(false);
+  const tempMarkerRef = useRef(null);
+  const officeMarkerRefs = useRef([]);
 
-  // ✅ Function to Save Location
-  const CreateOffice = async () => {
-    if (!location.latitude || !location.longitude) {
-      message.error("Location not selected.");
+  // 🚀 Fetch offices
+  const fetchOffices = async () => {
+    try {
+      const response = await apiService.callGet("/office");
+      setOffices(response || []);
+    } catch (error) {
+      console.error("Error fetching offices", error);
+    }
+  };
+
+  // 🚀 Add office
+  const handleAddOffice = async () => {
+    if (!newOfficeName || !location.latitude || !location.longitude) {
+      message.error("Please select a location and enter a name!");
       return;
     }
-
-    const locBody = {
-      lat: location.latitude,
-      long: location.longitude,
-      name: "Oyudent",
-    };
-
     try {
-      console.log(locBody);
-      await apiService.callPost(`/office`, locBody);
-      message.success("Location saved successfully!");
+      const body = {
+        name: newOfficeName,
+        lat: location.latitude,
+        long: location.longitude,
+      };
+      await apiService.callPost("/office", body);
+      message.success("Office added successfully!");
+      setIsModalOpen(false);
+      setNewOfficeName("");
+      fetchOffices();
     } catch (error) {
-      console.error("Error:", error);
-      message.error("Failed to save location.");
+      console.error(error);
+      message.error("Failed to add office.");
     }
   };
 
-  // ✅ Initialize Map & Set Marker
-  useEffect(() => {
-    if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition(
-        (position) => {
-          const { latitude, longitude } = position.coords;
-          setLocation({ latitude, longitude });
-
-          if (!map) {
-            const newMap = L.map("map", {
-              center: [latitude, longitude],
-              zoom: 15,
-              maxBounds: L.latLngBounds(
-                L.latLng(latitude - 2, longitude - 2),
-                L.latLng(latitude + 2, longitude + 2)
-              ),
-            });
-
-            L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
-              attribution: "&copy; OpenStreetMap contributors",
-            }).addTo(newMap);
-
-            // ✅ Click on Map to Move Marker
-            newMap.on("click", (e) => {
-              updateMarker(e.latlng.lat, e.latlng.lng, newMap);
-            });
-
-            setMap(newMap);
-            updateMarker(latitude, longitude, newMap);
-          }
-        },
-        () => console.error("Unable to retrieve location")
-      );
-    }
-  }, []);
-
-  // ✅ Function to Update Marker Location (Ensures Only One Marker)
-  const updateMarker = (lat, lng, existingMap = map) => {
-    setLocation({ latitude: lat, longitude: lng });
-
-    if (markerRef.current) {
-      existingMap.removeLayer(markerRef.current);
-    }
-
-    const newMarker = L.marker([lat, lng]).addTo(existingMap);
-    markerRef.current = newMarker;
+  // 🚀 Add office marker
+  const handleMarkerClick = (id) => {
+    setTimeout(() => {
+      // window.location.href="hrtime"
+      navigate(`HrOfficeWorkers/${id}`);
+    }, 0);
   };
+  
+  const addOfficeMarker = (lat, lng, label, id) => {
+    const marker = L.marker([lat, lng]).addTo(map);
+    if (label) marker.bindTooltip(label, { permanent: false });
+  
+    marker.on("click", () => handleMarkerClick(id));
+  
+    officeMarkerRefs.current.push(marker);
+  };
+  
 
-  // ✅ Click Outside to Close Modal
+  // 🚀 Init map
   useEffect(() => {
-    const handleClickOutside = (event) => {
-      if (modalRef.current && !modalRef.current.contains(event.target)) {
-        setModalOpen(false);
+    if (L.DomUtil.get("map")) {
+      L.DomUtil.get("map")._leaflet_id = null;
+    }
+
+    const mapInstance = L.map("map", {
+      center: [47.918873, 106.917701],
+      zoom: 13,
+      tap: false,
+    });
+
+    L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+      attribution: "&copy; OpenStreetMap contributors",
+    }).addTo(mapInstance);
+
+    mapInstance.on("click", (e) => {
+      const { lat, lng } = e.latlng;
+      setLocation({ latitude: lat, longitude: lng });
+
+      if (tempMarkerRef.current) {
+        mapInstance.removeLayer(tempMarkerRef.current);
       }
-    };
 
-    if (modalOpen) {
-      document.addEventListener("mousedown", handleClickOutside);
-    }
+      const newMarker = L.marker([lat, lng], { draggable: dragEnabled }).addTo(mapInstance);
+      newMarker.bindTooltip("New Office", { permanent: false });
+      tempMarkerRef.current = newMarker;
+
+      if (dragEnabled) {
+        newMarker.on("dragend", (event) => {
+          const position = event.target.getLatLng();
+          setLocation({ latitude: position.lat, longitude: position.lng });
+        });
+      }
+    });
+
+    setMap(mapInstance);
+    fetchOffices();
 
     return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
+      mapInstance.remove();
     };
-  }, [modalOpen]);
+  }, []);
+
+  useEffect(() => {
+    if (!map) return;
+    officeMarkerRefs.current.forEach((m) => map.removeLayer(m));
+    officeMarkerRefs.current = [];
+
+    offices.forEach((office) => {
+      if (office.location?.coordinates) {
+        const [lng, lat] = office.location.coordinates;
+        addOfficeMarker(lat, lng, office.name, office.id);
+      }
+    });
+  }, [offices, map]);
 
   return (
-    <div className="relative p-6 flex flex-col items-center gap-6 text-black mt-0 md:mt-10">
-      {/* ✅ Employee List */}
-      <div className="w-full max-w-3xl border p-4 rounded-lg shadow-lg bg-white">
-        <h2 className="text-xl font-semibold mb-4">Employees</h2>
-        <ul className="grid grid-cols-2 md:grid-cols-3 gap-4">
-          {mockEmployees.map((employee) => (
-            <li
-              key={employee.id}
-              className="p-3 border rounded-lg bg-gray-100 hover:bg-gray-200 cursor-pointer text-center"
-              onClick={() => {
-                setSelectedEmployee(employee);
-                setModalOpen(true);
-              }}
-            >
-              {employee.name}
-            </li>
-          ))}
-        </ul>
+    <div className="relative p-4">
+      {/* Map */}
+      <div className="relative w-full h-[500px] mb-6">
+        <div id="map" className="w-full h-full rounded shadow-md" />
       </div>
 
-      {/* ✅ Map Container (Lower z-index) */}
-      <div className="relative w-full max-w-4xl h-64 border rounded-lg overflow-hidden z-0">
-        <div id="map" className="w-full h-full"></div>
+      {/* Buttons */}
+      <div className="flex justify-center gap-4 mb-6">
+        <Button type="primary" onClick={() => setIsModalOpen(true)}>
+          + Add Office
+        </Button>
+        <Button
+          onClick={() => setDragEnabled((prev) => !prev)}
+          type={dragEnabled ? "dashed" : "default"}
+        >
+          {dragEnabled ? "Disable Dragging" : "Enable Dragging"}
+        </Button>
       </div>
 
-      {/* ✅ Show Selected Location */}
-      {location.latitude && (
-        <div className="w-full max-w-3xl border p-4 rounded shadow-lg text-center bg-white">
-          <p>
-            <strong>Current Location:</strong> {location.latitude}, {location.longitude}
-          </p>
-        </div>
-      )}
-
-      {/* ✅ Save Location Button (Fixed) */}
-      <button onClick={CreateOffice} className="bg-blue-500 text-white px-4 py-2 rounded mt-4">
-        Save Location
-      </button>
-
-      {/* ✅ Employee Attendance Modal (Higher z-index) */}
-      {modalOpen && selectedEmployee && (
-        <div className="fixed inset-0 flex justify-center items-center bg-black bg-opacity-50 z-50">
-          <div
-            ref={modalRef}
-            className="bg-white p-6 rounded-lg shadow-lg w-96 text-center relative z-50"
-          >
-            <h3 className="text-lg font-semibold mb-4">
-              Attendance for {selectedEmployee.name}
-            </h3>
-            <p>No attendance records found (mock data).</p>
-
-            {/* ✅ Close Button */}
-            <button
-              className="bg-red-500 text-white px-4 py-2 rounded mt-4"
-              onClick={() => setModalOpen(false)}
-            >
-              Close
-            </button>
+      {/* Modal */}
+      <Modal
+        title="Add New Office"
+        open={isModalOpen}
+        onCancel={() => setIsModalOpen(false)}
+        footer={[
+          <Button key="cancel" onClick={() => setIsModalOpen(false)}>
+            Cancel
+          </Button>,
+          <Button key="submit" type="primary" onClick={handleAddOffice}>
+            Save
+          </Button>,
+        ]}
+      >
+        <Input
+          value={newOfficeName}
+          onChange={(e) => setNewOfficeName(e.target.value)}
+          placeholder="Enter office name"
+          className="mb-4"
+        />
+        {location.latitude && location.longitude ? (
+          <div>
+            📍 Location Selected: <br />
+            <b>Lat:</b> {location.latitude} <br />
+            <b>Lng:</b> {location.longitude}
           </div>
-        </div>
-      )}
+        ) : (
+          <div className="text-red-500">Click on map to select a location!</div>
+        )}
+      </Modal>
     </div>
   );
 }
-
 export default HrAdmin;

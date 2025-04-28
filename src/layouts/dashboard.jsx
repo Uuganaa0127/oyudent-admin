@@ -16,6 +16,7 @@ import { useState } from "react";
 import { WarehousePage } from "@/pages/inventory";
 import { Test } from "@/pages/dashboard";
 import { WarehouseDetailPage } from "@/pages/inventory";
+import  { HrOfficeWorkers } from "@/pages/hrTime/hrOfficeWorkers";
 // import { CourseParticipants } from "../pages/course";
 
 export function Dashboard() {
@@ -49,6 +50,8 @@ export function Dashboard() {
       <Route path="/course/CourseParticipants/:courseId" element={<CourseParticipants />} />
       <Route path="/warehouse/warehousePage"  element= {<WarehousePage/>} />
       <Route path="/warehouse/details/:id" element={<WarehouseDetailPage />} />
+      <Route path="/hrTime/HrOfficeWorkers/:id" element={<HrOfficeWorkers />} />
+      
 
       {/* <Route path="/test/Test" element={<Test />} /> */}
 
