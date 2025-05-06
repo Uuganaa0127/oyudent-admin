@@ -7,7 +7,7 @@ import {
   RectangleStackIcon,
 } from "@heroicons/react/24/solid";
 import { Home, Profile, Tables, Notifications,Test} from "@/pages/dashboard";
-import { SignUp } from "@/pages/auth";
+import { SignIn, SignUp } from "@/pages/auth";
 import { News  ,CreateNews } from "@/pages/news";
 import { Course, CourseParticipants }from "@/pages/course"
 import { HrAdmin } from "@/pages/hrTime"
@@ -18,6 +18,7 @@ import { jwtDecode } from "jwt-decode";
 import { CountryPage } from "@/pages/country/CountryPage"
 import { WarehousePage, AddInventoryPage, ShowInvoicesPage } from "@/pages/inventory"
 import UserList from "./pages/userList/userList";
+import Logout from "./pages/auth/logout";
 
 // import CreateNews from "./pages/homeController/newsCreate";
 // import { Test } from "@/pages/test";
@@ -30,7 +31,7 @@ if (token) {
   try {
     const decoded = jwtDecode(token);
     console.log(decoded,'decoded');
-    userRole = decoded.roles?.includes("admin") ? "admin" : "user"; // ✅ Determine role
+    // userRole = decoded.roles?.includes("admin") ? "admin" : "user"; // ✅ Determine role
   } catch (error) {
     console.error("Invalid token:", error);
   }
@@ -131,12 +132,7 @@ export const routes = [
       path: "/test",
       element: <Test />,
     },
-    {
-      icon: <RectangleStackIcon {...icon} />,
-      name: "sign up",
-      path: "/sign-up",
-      element: <SignUp />,
-    },
+   
     ],
   },
   {
@@ -167,26 +163,27 @@ export const routes = [
       path: "/test",
       element: <Test />,
     },
-    // {
-    //   icon: <RectangleStackIcon {...icon} />,
-    //   name: "sign up",
-    //   path: "/sign-up",
-    //   element: <SignUp />,
-    // },
+    {
+      icon: <RectangleStackIcon {...icon} />,
+      name: "sign up",
+      path: "/sign-up",
+      element: <SignUp />,
+    },
+    
     ],
   },
-  // {
-  //   title: "auth pages",
-  //   layout: "auth",
-  //   pages: [
-  //     {
-  //       icon: <ServerStackIcon {...icon} />,
-  //       name: "sign in",
-  //       path: "/sign-in",
-  //       element: <SignIn />,
-  //     },
-  //   ],
-  // }, 
+  {
+    title: "auth pages",
+    layout: "auth",
+    pages: [
+      {
+        icon: <RectangleStackIcon {...icon} />,
+        name: "Logout",
+        path: "/logout",
+        element: <Logout />,
+      }
+    ],
+  }, 
 ];
 
 export default routes;

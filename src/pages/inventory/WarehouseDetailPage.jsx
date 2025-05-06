@@ -36,9 +36,9 @@ export function WarehouseDetailPage() {
   const [uploadedImages, setUploadedImages] = useState([]);
   const [currentImage, setCurrentImage] = useState(0);
   const [productAttributes, setProductAttributes] = useState({
-    size: "",
-    weight: "",
-    color: "",
+    size: [""],
+    weight: [""],
+    color: [""],
   });
   const [enabledAttributes, setEnabledAttributes] = useState({
     size: false,
@@ -179,30 +179,54 @@ export function WarehouseDetailPage() {
         <div className="mt-6">
           <h2 className="text-xl font-bold mb-4">Барааны нэмэлт мэдээлэл</h2>
           {["size", "weight", "color"].map((attr) => (
-            <div key={attr} className="flex items-center mb-2">
-              <input
-                type="checkbox"
-                checked={enabledAttributes[attr]}
-                onChange={(e) =>
-                  setEnabledAttributes((prev) => ({ ...prev, [attr]: e.target.checked }))
-                }
-                className="mr-2"
-              />
-              <label className="w-24 capitalize">{attr}</label>
+  <div key={attr} className="mb-4">
+    <div className="flex items-center mb-1">
+      <input
+        type="checkbox"
+        checked={enabledAttributes[attr]}
+        onChange={(e) =>
+          setEnabledAttributes((prev) => ({ ...prev, [attr]: e.target.checked }))
+        }
+        className="mr-2"
+      />
+      <label className="w-24 capitalize">{attr}</label>
 
-              {enabledAttributes[attr] && (
-                <input
-                  type="text"
-                  value={productAttributes[attr]}
-                  onChange={(e) =>
-                    setProductAttributes((prev) => ({ ...prev, [attr]: e.target.value }))
-                  }
-                  placeholder={`${attr}...`}
-                  className="border px-2 py-1 rounded ml-4"
-                />
-              )}
-            </div>
-          ))}
+      {enabledAttributes[attr] && (
+        <button
+          type="button"
+          onClick={() =>
+            setProductAttributes((prev) => ({
+              ...prev,
+              [attr]: [...prev[attr], ""],
+            }))
+          }
+          className="ml-2 bg-blue-500 text-white px-2 rounded hover:bg-blue-600"
+        >
+          +
+        </button>
+      )}
+    </div>
+
+    {enabledAttributes[attr] &&
+      productAttributes[attr].map((val, i) => (
+        <input
+          key={i}
+          type="text"
+          value={val}
+          onChange={(e) =>
+            setProductAttributes((prev) => {
+              const updated = [...prev[attr]];
+              updated[i] = e.target.value;
+              return { ...prev, [attr]: updated };
+            })
+          }
+          placeholder={`${attr}...`}
+          className="border px-2 py-1 rounded w-full mb-2"
+        />
+      ))}
+  </div>
+))}
+
         </div>
 
         <div className="flex gap-4 mt-6">
