@@ -14,6 +14,8 @@ import { useState } from "react";
 import { WarehousePage } from "@/pages/inventory";
 import CourseParticipants from "@/pages/course/courseParticipants";
 import {WarehouseDetailPage} from "@/pages/inventory";
+import {OrderDetailsPage} from "@/pages/inventory";
+
 
 export function Warehouse() {
   const [controller, dispatch] = useMaterialTailwindController();
@@ -60,6 +62,8 @@ export function Warehouse() {
         {/* Route section for Warehouse */}
         <Routes>
         <Route path="details/:id" element={<WarehouseDetailPage />} />
+        <Route path="Order/OrderDetailsPage" element={<OrderDetailsPage />} />
+
 
           {routes.map(
            ({ layout, pages }) =>

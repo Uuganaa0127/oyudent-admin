@@ -19,6 +19,7 @@ import { CountryPage } from "@/pages/country/CountryPage"
 import { WarehousePage, AddInventoryPage, ShowInvoicesPage } from "@/pages/inventory"
 import UserList from "./pages/userList/userList";
 import Logout from "./pages/auth/logout";
+import AdminOrdersPage from "./pages/inventory/Order";
 
 // import CreateNews from "./pages/homeController/newsCreate";
 // import { Test } from "@/pages/test";
@@ -158,11 +159,11 @@ export const routes = [
         element: <ShowInvoicesPage />,
       },
       {
-      icon: <ServerStackIcon {...icon} />,
-      name: "test",
-      path: "/test",
-      element: <Test />,
-    },
+        icon: <HomeIcon {...icon} />,
+        name: "Order",
+        path: "/Order",
+        element: <AdminOrdersPage />,
+      },
     {
       icon: <RectangleStackIcon {...icon} />,
       name: "sign up",
